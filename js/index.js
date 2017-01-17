@@ -18,16 +18,13 @@ $(document).ready(function(){
 
 		// user specified variables
 		var matchConfig = {
-			gamesPerSet: 3,
+			gamesPerSet: 6,
 			sets: 3,
 			tieBreakerPoints: 7,
 			players : ['Player 1', 'Player 2'],
 		}
 
-		$('#p1name').text(matchConfig.players[0]);
-		$('#p2name').text(matchConfig.players[1]);
-		$("#p1scoresBtn").text(matchConfig.players[0] + " scores");
-		$("#p2scoresBtn").text(matchConfig.players[1] + " scores");
+		drawConfig();
 
 		for (matchState.games=[]; matchState.games.push([0,0])<matchConfig.sets;)
 			;
@@ -52,6 +49,31 @@ $(document).ready(function(){
 		$("#undoBtn").click(function(){
 			restoreBackup();
 			$(this).prop('disabled', true);
+		});
+
+		$("#adminBtn").click(function(){
+			$("#adminPanel").toggleClass('hidden');
+			$(this).toggleClass('btn-primary');
+		});
+
+		$("#applyBtn").click(function(){
+			matchConfig.players[0] = $("#admin_p1nameInput").val();
+			matchConfig.players[1] = $("#admin_p2nameInput").val();
+			matchConfig.sets = $("#sets").val();
+			matchConfig.gamesPerSet = $("#gamesPerSet").val();
+			matchConfig.tieBreakerPoints = $("#tieBreakerPoints").val();
+			matchState.currentSet = $("#currentSet").val()-1;
+
+			matchState.points[0] = $("#admin_p1pointsInput").val();
+			matchState.points[1] = $("#admin_p2pointsInput").val();
+
+			for (var i=0; i<matchConfig.sets; i++){
+				matchState.games[i][0] = $("#admin_p1set"+parseInt(i+1)+"Input").val();
+				matchState.games[i][1] = $("#admin_p2set"+parseInt(i+1)+"Input").val();
+			}
+
+			drawConfig();
+			drawScores();
 		});
 
 		function backup() {
@@ -107,6 +129,13 @@ $(document).ready(function(){
 		}
 		function markSetAdd(set) {
 			$('#set'+set+'head').addClass('success');
+		}
+
+		function drawConfig() {
+			$('#p1name').text(matchConfig.players[0]);
+			$('#p2name').text(matchConfig.players[1]);
+			$("#p1scoresBtn").text(matchConfig.players[0] + " scores");
+			$("#p2scoresBtn").text(matchConfig.players[1] + " scores");
 		}
 
 		function playerScores(winningPlayer){

@@ -1,4 +1,4 @@
-#scoreTable th, #scoreTable tr  {
+.centeredTable th, .centeredTable tr  {
 	text-align: center;
 }
 #scoreScreen  {
@@ -6,4 +6,10 @@
 }
 .container {
 	margin-top: 2em;
+}
+.hidden {
+	display: none;
+}
+.btn {
+	margin: 1px;
 }
