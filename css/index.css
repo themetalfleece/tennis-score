@@ -1,0 +1,9 @@
+#scoreTable th, #scoreTable tr  {
+	text-align: center;
+}
+#scoreScreen  {
+	text-align: center;
+}
+.container {
+	margin-top: 2em;
+}

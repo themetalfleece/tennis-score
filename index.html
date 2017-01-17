@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<script type="text/javascript" src="js/index.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/index.css" />
+
+	<title>Tennis Score</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+
+	<div class="container well" id = "scoreScreen">
+		<div>
+			<div class="table-responsive">
+				<table class="table table-striped table-bordered" id="scoreTable">
+					<tbody>
+						<tr>
+							<th>Player</th>
+							<th class="info">Points</th>
+							<th id="set1head" class="success">Set 1</th> 
+							<th id="set2head">Set 2</th>
+							<th id="set3head">Set 3</th>
+						</tr>
+						<tr>
+							<td class="col-md-2" id="p1name"></td>
+							<td class="col-md-1" id="p1points">0</td>
+							<td class="col-md-1" id="p1set1">0</td>
+							<td class="col-md-1" id="p1set2">0</td>
+							<td class="col-md-1" id="p1set3">0</td>
+						</tr>
+						<tr>
+							<td class="col-md-2" id="p2name"></td>
+							<td class="col-md-1" id="p2points">0</td>
+							<td class="col-md-1" id="p2set1">0</td>
+							<td class="col-md-1" id="p2set2">0</td>
+							<td class="col-md-1" id="p2set3">0</td>
+						</tr>
+					</tbody>
+				</table>
+				<span id="latestEvent">Match just started!</span>
+			</div>
+		</div>
+		<br>
+		<div class="text-center">
+			<div class="btn-group">
+				<button type="button" class="btn" id="p1scoresBtn"></button>
+				<button type="button" class="btn" id="p2scoresBtn"></button>
+				<br>
+				<button type="button" class="btn" id="undoBtn" disabled>Undo</button>
+			</div>
+		</div>
+	</div>
+
+</body>
