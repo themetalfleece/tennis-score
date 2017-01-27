@@ -1,156 +1,268 @@
 $(document).ready(function(){
 
-		// standard variables
-		var pointTrans = [0, 15, 30, 40, "AD"];
+	var pointTrans;
+	var matchState;
+	var matchConfig;
+	var backupMatchState;
 
-		var matchState = {
-			points : [0, 0],
-			tieBreakerActive : [],
-			currentSet : 0,
-			playerWonSets : [0, 0],
-			winner : -1,
-			games: [],
-			tieBreakerScore: [],
-			latestEvent : {level:0, text:"Match just started!"},
-		}
+	pointTrans = [0, 15, 30, 40, "AD"];
 
-		var backupMatchState;
+	matchState = {
+		points : [0, 0],
+		tieBreakerActive : {},
+		currentSet : 0,
+		playerSetsWon : [0, 0],
+		winner : -1,
+		games: {},
+		tieBreakerScore: {},
+		latestEvent : {level:0, text:"Match just started!"},
+		wonSets : []
+	}
 
-		// user specified variables
-		var matchConfig = {
-			gamesPerSet: 6,
-			sets: 3,
-			tieBreakerPoints: 7,
-			players : ['Player 1', 'Player 2'],
-		}
+	matchConfig = {
+		gamesPerSet: 6,
+		sets: 3,
+		tieBreakerPoints: 7,
+		players : ['Player 1', 'Player 2'],
+	}
 
-		drawConfig();
 
-		for (matchState.games=[]; matchState.games.push([0,0])<matchConfig.sets;)
+	for (matchState.games=[]; matchState.games.push([0,0])<=5;)
+		;
+	for (matchState.tieBreakerScore=[]; matchState.tieBreakerScore.push([0,0])<=5;)
+		;
+
+
+	restoreAppBackup();
+
+	drawConfig();
+
+	function backupApp() {
+		window.localStorage.setItem( 'matchConfig', JSON.stringify(matchConfig));
+		window.localStorage.setItem( 'matchState', JSON.stringify(matchState));
+	}
+
+	function restoreAppBackup(){
+		var matchConfigGet = window.localStorage.getItem( 'matchConfig' );
+		var matchStateGet = window.localStorage.getItem( 'matchState' );
+		if (matchConfigGet === null || matchStateGet === null)
 			;
-		for (matchState.tieBreakerScore=[]; matchState.tieBreakerScore.push([0,0])<matchConfig.sets;)
-			;
-
-
-		$("#p1scoresBtn").click(function(){
-			backup();
-			playerScores(0);
-			drawScores();
-			$("#undoBtn").prop('disabled', false);
-		});
-
-		$("#p2scoresBtn").click(function(){
-			backup();
-			playerScores(1);
-			drawScores();
-			$("#undoBtn").prop('disabled', false);
-		});
-
-		$("#undoBtn").click(function(){
-			restoreBackup();
-			$(this).prop('disabled', true);
-		});
-
-		$("#adminBtn").click(function(){
-			$("#adminPanel").toggleClass('hidden');
-			$(this).toggleClass('btn-primary');
-		});
-
-		$("#applyBtn").click(function(){
-			matchConfig.players[0] = $("#admin_p1nameInput").val();
-			matchConfig.players[1] = $("#admin_p2nameInput").val();
-			matchConfig.sets = $("#sets").val();
-			matchConfig.gamesPerSet = $("#gamesPerSet").val();
-			matchConfig.tieBreakerPoints = $("#tieBreakerPoints").val();
-			matchState.currentSet = $("#currentSet").val()-1;
-
-			matchState.points[0] = $("#admin_p1pointsInput").val();
-			matchState.points[1] = $("#admin_p2pointsInput").val();
-
-			for (var i=0; i<matchConfig.sets; i++){
-				matchState.games[i][0] = $("#admin_p1set"+parseInt(i+1)+"Input").val();
-				matchState.games[i][1] = $("#admin_p2set"+parseInt(i+1)+"Input").val();
-			}
-
+		else {
+			matchConfig = JSON.parse(matchConfigGet);
+			matchState = JSON.parse(matchStateGet);
+			hideShowSets();
 			drawConfig();
 			drawScores();
-		});
-
-		function backup() {
-			backupMatchState =  jQuery.extend(true, {}, matchState);
-		};
-
-		function restoreBackup() {
-			matchState =  jQuery.extend(true, {}, backupMatchState);
-			drawScores();
-		};
-
-		function drawScores() {
-			drawPoints();
-			var currentSetOld = matchState.currentSet;
-			for (var i=0; i<matchConfig.sets;i++){
-				matchState.currentSet = i;
-				drawGamesInSet(i, matchState.tieBreakerActive[matchState.currentSet]);
-				markSetRemove(i+1);
-			}
-			matchState.currentSet = currentSetOld;
-			if (matchState.winner == -1)
-				markSetAdd(matchState.currentSet+1);
-			else
-				drawWinner();
-			$('#latestEvent').text(matchState.latestEvent.text);
-		};
-
-		function drawPoints() {
-			if (!matchState.tieBreakerActive[matchState.currentSet]){
-				fadeHtml('#p1points', pointTrans[matchState.points[0]]);
-				fadeHtml('#p2points', pointTrans[matchState.points[1]]);
-			}
-			else {
-				fadeHtml('#p1points', matchState.tieBreakerScore[matchState.currentSet][0]);
-				fadeHtml('#p2points', matchState.tieBreakerScore[matchState.currentSet][1]);
-			}
 		}
+	};
 
-		function drawGamesInSet(set, showTieBreakerScore){
-			fadeHtml('#p1set'+ parseInt(set+1), matchState.games[set][0]+(showTieBreakerScore?"<sup>"+matchState.tieBreakerScore[matchState.currentSet][0]+"</sup>":""));
-			fadeHtml('#p2set'+ parseInt(set+1), matchState.games[set][1]+(showTieBreakerScore?"<sup>"+matchState.tieBreakerScore[matchState.currentSet][1]+"</sup>":""));
-		}
+	// TODO add who is serving
 
-		function drawWinner() {
-			matchState.latestEvent.level = 4;
-			matchState.latestEvent.text = matchConfig.players[matchState.winner] + " won the match!";
-			$('#p1scoresBtn').prop('disabled', true);
-			$('#p2scoresBtn').prop('disabled', true);
-		}
+	$("#resetBtn").click(function(){
 
-		function markSetRemove(set) {
-			$('#set'+set+'head').removeClass('success');
-		}
-		function markSetAdd(set) {
-			$('#set'+set+'head').addClass('success');
-		}
+		$('#confirmResetModal').modal({ backdrop: 'static', keyboard: false })
+		.one('click', '#confirmResetBtn', function() {
+			$("#currentSet").val(1);
 
-		function drawConfig() {
-			$('#p1name').text(matchConfig.players[0]);
-			$('#p2name').text(matchConfig.players[1]);
-			$("#p1scoresBtn").text(matchConfig.players[0] + " scores");
-			$("#p2scoresBtn").text(matchConfig.players[1] + " scores");
-		}
-
-		function playerScores(winningPlayer){
-
-			matchState.latestEvent.level = 1;
-
-			var losingPlayer = (winningPlayer+1)%2;
-
-			if (matchState.tieBreakerActive[matchState.currentSet]){
-				matchState.tieBreakerScore[matchState.currentSet][winningPlayer]++;
-				if (matchState.tieBreakerScore[matchState.currentSet][winningPlayer] >= matchConfig.tieBreakerPoints && matchState.tieBreakerScore[matchState.currentSet][winningPlayer] - matchState.tieBreakerScore[matchState.currentSet][losingPlayer] >= 2) {
-					playerWinsSet(winningPlayer);
+			$("#admin_p1pointsInput").val(0);
+			$("#admin_p2pointsInput").val(0);
+			for (var i=1; i<=5;i++){
+				for (var j=1;j<=2;j++){
+					$("#admin_p"+j+"set"+i+"Input").val(0);
+					$("#p"+j+"set"+i).removeClass('bold');
 				}
 			}
-			else {
+			$("#applyBtn").click();
+		});
+
+	});
+
+	function processAdminValues() {
+		// TODO change playerSetsWon etc and who is serving
+	};
+
+
+	function hideShowSets() {
+		for (var i=1; i<=matchConfig.sets;i++){
+			$("#set"+i+"head").removeClass('hidden');
+			$("#admin_set"+i+"head").removeClass('hidden');
+			for (var j=1;j<=2;j++){
+				$("#p"+j+"set"+i).removeClass('hidden');
+				$("#admin_p"+j+"set"+i).removeClass('hidden');
+			};
+
+		}
+		for (i=matchConfig.sets+1;i<=5;i++) {
+			$("#set"+i+"head").addClass('hidden');
+			$("#admin_set"+i+"head").addClass('hidden');
+			for (var j=1;j<=2;j++){
+				$("#p"+j+"set"+i).addClass('hidden');
+				$("#admin_p"+j+"set"+i).addClass('hidden');
+			};
+		}
+	};
+
+	function updateAdminInputs(){
+
+		$("#admin_p1pointsInput").val(matchState.points[0]);
+		$("#admin_p2pointsInput").val(matchState.points[1]);
+		for (var i=1; i<=matchConfig.sets;i++){
+			for (var j=1;j<=2;j++){
+				$("#admin_p"+j+"set"+i+"Input").val(matchState.games[i-1][j-1]);
+			}
+		}
+	};
+
+
+	$("#p1scoresBtn").click(function(){
+		backup();
+		playerScores(0);
+		drawScores();
+		$("#undoBtn").prop('disabled', false);
+		backupApp();
+	});
+
+	$("#p2scoresBtn").click(function(){
+		backup();
+		playerScores(1);
+		drawScores();
+		$("#undoBtn").prop('disabled', false);
+		backupApp();
+	});
+
+	$("#undoBtn").click(function(){
+		restoreBackup();
+		$(this).prop('disabled', true);
+	});
+
+	$("#adminBtn").click(function(){
+		adminPanelToggle();
+	});
+
+	function adminPanelToggle() {
+		$("#adminPanel").toggleClass('hidden');
+		$("#adminBtn").toggleClass('btn-primary');
+		if (!$("#adminPanel").hasClass('hidden')){
+			$("#sets").val(matchConfig.sets);
+			$("#gamesPerSet").val(matchConfig.gamesPerSet);
+			$("#tieBreakerPoints").val(matchConfig.tieBreakerPoints);
+			$("#currentSet").val(parseInt(matchState.currentSet) + 1);
+		}
+		updateAdminInputs();
+	};
+
+	$("#applyBtn").click(function(){
+		matchConfig.players[0] = $("#admin_p1nameInput").val();
+		matchConfig.players[1] = $("#admin_p2nameInput").val();
+		if (matchConfig.players[0] == "")
+			matchConfig.players[0] = "Player 1";
+		if (matchConfig.players[1] == "")
+			matchConfig.players[1] = "Player 2";
+		matchConfig.sets = parseInt($("#sets").val());
+		matchConfig.gamesPerSet = parseInt($("#gamesPerSet").val());
+		matchConfig.tieBreakerPoints = $("#tieBreakerPoints").val();
+		matchState.currentSet = $("#currentSet").val()-1;
+
+		matchState.points[0] = $("#admin_p1pointsInput").val();
+		matchState.points[1] = $("#admin_p2pointsInput").val();
+
+		for (var i=0; i<matchConfig.sets; i++){
+			matchState.games[i][0] = $("#admin_p1set"+parseInt(i+1)+"Input").val();
+			matchState.games[i][1] = $("#admin_p2set"+parseInt(i+1)+"Input").val();
+		}
+
+		matchState.latestEvent.text = ""; 
+		matchState.latestEvent.level = 0; 
+
+		$("p1scoresBtn").prop('disabled', false);
+		$("p2scoresBtn").prop('disabled', false);
+		$("undoBtn").prop('disabled', true);
+
+
+		backupApp();
+		hideShowSets();
+		drawConfig();
+		drawScores();
+		adminPanelToggle();
+	});
+
+	function backup() {
+		backupMatchState =  jQuery.extend(true, {}, matchState);
+	};
+
+	function restoreBackup() {
+		matchState =  jQuery.extend(true, {}, backupMatchState);
+		drawScores();
+	};
+
+	function drawScores() {
+		drawPoints();
+		var currentSetOld = matchState.currentSet;
+		for (var i=0; i<matchConfig.sets;i++){
+			matchState.currentSet = i;
+			drawGamesInSet(i, matchState.tieBreakerActive[matchState.currentSet]);
+			markSetRemove(i+1);
+		}
+		matchState.currentSet = currentSetOld;
+		if (matchState.winner == -1)
+			markSetAdd(matchState.currentSet+1);
+		else
+			drawWinner();
+		for (var i=0; i< matchState.wonSets.length; i++)
+			$(matchState.wonSets[i]).addClass('bold');
+		$('#latestEvent').text(matchState.latestEvent.text);
+	};
+
+	function drawPoints() {
+		if (!matchState.tieBreakerActive[matchState.currentSet]){
+			fadeHtml('#p1points', pointTrans[matchState.points[0]]);
+			fadeHtml('#p2points', pointTrans[matchState.points[1]]);
+		}
+		else {
+			fadeHtml('#p1points', matchState.tieBreakerScore[matchState.currentSet][0]);
+			fadeHtml('#p2points', matchState.tieBreakerScore[matchState.currentSet][1]);
+		}
+	}
+
+	function drawGamesInSet(set, showTieBreakerScore){
+		fadeHtml('#p1set'+ parseInt(set+1), matchState.games[set][0]+(showTieBreakerScore?"<sup>"+matchState.tieBreakerScore[matchState.currentSet][0]+"</sup>":""));
+		fadeHtml('#p2set'+ parseInt(set+1), matchState.games[set][1]+(showTieBreakerScore?"<sup>"+matchState.tieBreakerScore[matchState.currentSet][1]+"</sup>":""));
+	}
+
+	function drawWinner() {
+		matchState.latestEvent.level = 4;
+		matchState.latestEvent.text = matchConfig.players[matchState.winner] + " won the match!";
+		$('#p1scoresBtn').prop('disabled', true);
+		$('#p2scoresBtn').prop('disabled', true);
+	}
+
+	function markSetRemove(set) {
+		$('#set'+set+'head').removeClass('success');
+	}
+	function markSetAdd(set) {
+		$('#set'+set+'head').addClass('success');
+	}
+
+	function drawConfig() {
+		$('#p1name').text(matchConfig.players[0]);
+		$('#p2name').text(matchConfig.players[1]);
+		$("#p1scoresBtn").text(matchConfig.players[0]);
+		$("#p2scoresBtn").text(matchConfig.players[1]);
+	}
+
+	function playerScores(winningPlayer){
+
+		matchState.latestEvent.level = 1;
+
+		var losingPlayer = (winningPlayer+1)%2;
+
+		if (matchState.tieBreakerActive[matchState.currentSet]){
+			matchState.tieBreakerScore[matchState.currentSet][winningPlayer]++;
+			if (matchState.tieBreakerScore[matchState.currentSet][winningPlayer] >= matchConfig.tieBreakerPoints && matchState.tieBreakerScore[matchState.currentSet][winningPlayer] - matchState.tieBreakerScore[matchState.currentSet][losingPlayer] >= 2) {
+				playerWinsSet(winningPlayer);
+			}
+		}
+		else {
 				// 0 to 30
 				if (matchState.points[winningPlayer] <= 2)
 					matchState.points[winningPlayer]++;
@@ -170,7 +282,7 @@ $(document).ready(function(){
 					playerWinsGame(winningPlayer);
 			}
 			if (matchState.latestEvent.level <= 1)
-				matchState.latestEvent.text = matchConfig.players[winningPlayer] + " scores the point";
+				matchState.latestEvent.text = matchConfig.players[winningPlayer] + " scored the point";
 		};
 
 		function playerWinsGame(winningPlayer){
@@ -192,24 +304,25 @@ $(document).ready(function(){
 
 			if (matchState.latestEvent.level <= 2) {
 				matchState.latestEvent.level = 2;
-				matchState.latestEvent.text = matchConfig.players[winningPlayer] + " wins the game";
+				matchState.latestEvent.text = matchConfig.players[winningPlayer] + " took the game";
 			}
 
 		};
 
 		function playerWinsSet(winningPlayer){
-			matchState.playerWonSets[winningPlayer]++;
-			if (matchState.playerWonSets[winningPlayer] == (matchConfig.sets+1)/2){
+			matchState.playerSetsWon[winningPlayer]++;
+			matchState.wonSets.push("#p"+parseInt(winningPlayer+1)+"set"+ parseInt(matchState.currentSet+1));
+			if (matchState.playerSetsWon[winningPlayer] == (matchConfig.sets+1)/2){
 				matchState.winner = winningPlayer;
 				return;
-			}
+			};	
 			matchState.currentSet++;
 			if (matchState.latestEvent.level <= 3) {
 				matchState.latestEvent.level = 3;
-				matchState.latestEvent.text = matchConfig.players[winningPlayer] + " takes the set";
+				matchState.latestEvent.text = matchConfig.players[winningPlayer] + " took the set";
 			}
-		};
 
+		};
 
 		function fadeHtml(object, html){
 			if ($(object).html() != html) {
@@ -218,5 +331,6 @@ $(document).ready(function(){
 				}).fadeIn('fast');
 			}
 		}
+
 
 	});
