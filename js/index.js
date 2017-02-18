@@ -62,6 +62,8 @@ $(document).ready(function(){
 
 		$('#confirmResetModal').modal({ backdrop: 'static', keyboard: false })
 		.one('click', '#confirmResetBtn', function() {
+			matchState.winner = -1;
+			matchState.wonSets = [];
 			$("#currentSet").val(1);
 
 			$("#admin_p1pointsInput").val(0);
@@ -69,7 +71,8 @@ $(document).ready(function(){
 			for (var i=1; i<=5;i++){
 				for (var j=1;j<=2;j++){
 					$("#admin_p"+j+"set"+i+"Input").val(0);
-					$("#p"+j+"set"+i).removeClass('bold');
+					$('#p'+i+'set'+i).removeClass('bold');
+					console.log('#p'+j+'set'+i);
 				}
 			}
 			$("#applyBtn").click();
@@ -174,9 +177,9 @@ $(document).ready(function(){
 		matchState.latestEvent.text = ""; 
 		matchState.latestEvent.level = 0; 
 
-		$("p1scoresBtn").prop('disabled', false);
-		$("p2scoresBtn").prop('disabled', false);
-		$("undoBtn").prop('disabled', true);
+		$("#p1scoresBtn").prop('disabled', false);
+		$("#p2scoresBtn").prop('disabled', false);
+		$("#undoBtn").prop('disabled', true);
 
 
 		backupApp();
