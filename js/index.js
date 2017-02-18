@@ -62,8 +62,21 @@ $(document).ready(function(){
 
 		$('#confirmResetModal').modal({ backdrop: 'static', keyboard: false })
 		.one('click', '#confirmResetBtn', function() {
-			matchState.winner = -1;
-			matchState.wonSets = [];
+			matchState = {
+				points : [0, 0],
+				tieBreakerActive : {},
+				currentSet : 0,
+				playerSetsWon : [0, 0],
+				winner : -1,
+				games: {},
+				tieBreakerScore: {},
+				latestEvent : {level:0, text:"Match just started!"},
+				wonSets : []
+			};
+			for (matchState.games=[]; matchState.games.push([0,0])<=5;)
+				;
+			for (matchState.tieBreakerScore=[]; matchState.tieBreakerScore.push([0,0])<=5;)
+				;
 			$("#currentSet").val(1);
 
 			$("#admin_p1pointsInput").val(0);
@@ -72,7 +85,6 @@ $(document).ready(function(){
 				for (var j=1;j<=2;j++){
 					$("#admin_p"+j+"set"+i+"Input").val(0);
 					$('#p'+i+'set'+i).removeClass('bold');
-					console.log('#p'+j+'set'+i);
 				}
 			}
 			$("#applyBtn").click();
