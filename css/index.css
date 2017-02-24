@@ -28,3 +28,8 @@ select.form-control {
 .bold{
 	font-weight: bold;
 }
+
+/* we should implement bootstrap 4 */
+.mb-2 {
+  margin-bottom: 10px;
+}

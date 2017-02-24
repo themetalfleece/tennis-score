@@ -1,30 +1,33 @@
 <!DOCTYPE html>
 
 <head>
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<!-- Latest compiled JavaScript -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+		crossorigin="anonymous">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<!-- Latest compiled JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!-- will only load if it's being hosted by nodejs' -->
+		<script src="/socket.io/socket.io.js"></script>
 
-	<script type="text/javascript" src="js/index.js"></script>
-	<link rel="stylesheet" type="text/css" href="css/index.css" />
+		<script type="text/javascript" src="js/index.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
 
-	<title>Tennis Score</title>
+		<title>Tennis Score</title>
 
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
 </head>
 
 <body>
 
-	<div class="container well" id = "scoreScreen">
+	<div class="container well" id="scoreScreen">
 		<div class="table-responsive">
 			<table class="table table-striped table-bordered centeredTable" id="scoreTable">
 				<tbody>
 					<tr>
 						<th>Player</th>
 						<th class="info">Points</th>
-						<th id="set1head" class="success">Set 1</th> 
+						<th id="set1head" class="success">Set 1</th>
 						<th id="set2head">Set 2</th>
 						<th id="set3head">Set 3</th>
 						<th id="set4head">Set 4</th>
@@ -55,7 +58,7 @@
 			<span id="latestEvent">Match just started!</span>
 		</div>
 		<br>
-		<div class="row">
+		<div class="row host_only mb-2">
 			<div class="col-xs-6">
 				<button type="button" class="btn btn-success btn-block btn-lg" id="p1scoresBtn"></button>
 			</div>
@@ -63,8 +66,7 @@
 				<button type="button" class="btn btn-warning btn-block btn-lg" id="p2scoresBtn"></button>
 			</div>
 		</div>
-		<br>
-		<div class="row">
+		<div class="row host_only">
 			<div class="col-sm-3 col-sm-offset-3 col-xs-12">
 				<button type="button" class="btn btn-block btn-lg" id="undoBtn" disabled>Undo</button>
 			</div>
@@ -72,8 +74,6 @@
 				<button type="button" class="btn btn-block btn-lg" id="adminBtn">Configure</button>
 			</div>
 		</div>
-		<br>
-		<br>
 	</div>
 	<div class="container well hidden" id="adminPanel">
 		<div class="table-responsive">
@@ -82,7 +82,7 @@
 					<tr>
 						<th class="col">Player</th>
 						<th class="col info">Points</th>
-						<th class="col" id="admin_set1head">Set 1</th> 
+						<th class="col" id="admin_set1head">Set 1</th>
 						<th class="col" id="admin_set2head">Set 2</th>
 						<th class="col" id="admin_set3head">Set 3</th>
 						<th class="col" id="admin_set4head">Set 4</th>
@@ -281,7 +281,7 @@
 						<option value=4>4</option>
 						<option value=5>5</option>
 					</select>
-				</div>				
+				</div>
 			</div>
 			<br>
 			<div class="col-sm-3 col-sm-offset-3 col-xs-12">
@@ -292,6 +292,24 @@
 			</div>
 		</form>
 	</div>
+
+	<div class="ws_only">
+		<div class="container well">
+			<div class="text-center row">
+				<div class="col-sm-3 col-sm-offset-3 col-xs-12">
+					<button id="host" class="btn btn-block btn-lg connectionless_only">Broadcast</button>
+				</div>
+				<div class="col-sm-3 col-xs-12">
+					<button id="join" class="btn btn-block btn-lg connectionless_only">Spectate</button>
+				</div>
+			</div>
+			<div class="text-center">
+				<h3 id="ws_status"> Press Host if you want to broadcast your game, or Join if you want to spectate a game. </h3>
+			</div>
+		</div>
+	</div>
+
+
 	<div class="container">
 		<div class="modal fade" id="confirmResetModal" role="dialog">
 			<div class="modal-dialog">
@@ -311,7 +329,7 @@
 					</div>
 				</div>
 			</div>
-		</div> 
+		</div>
 	</div>
 
 </body>
