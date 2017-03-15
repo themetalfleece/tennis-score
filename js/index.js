@@ -95,7 +95,7 @@ $(document).ready(function () {
 				for (var i = 1; i <= 5; i++) {
 					for (var j = 1; j <= 2; j++) {
 						$("#admin_p" + j + "set" + i + "Input").val(0);
-						$('#p' + i + 'set' + i).removeClass('bold');
+						$('#p' + j + 'set' + i).removeClass('bold');
 					}
 				}
 				$("#applyBtn").click();
