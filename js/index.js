@@ -4,7 +4,7 @@ $(document).ready(function () {
 	try {
 		if (io === undefined);
 	}
-	catch (e) { 
+	catch (e) {
 		$('.ws_only').hide();
 	}
 
