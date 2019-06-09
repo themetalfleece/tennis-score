@@ -1,7 +1,7 @@
 # tennis_score
 A tennis score keeper which features Broadcasting and Spectating
 
-Static webpage without broadcasting/spectating: [Webpage index](https://themetalfleece.github.io/tennis_score/)
+Static webpage without broadcasting/spectating: [Webpage index](https://themetalfleece.github.io/tennis-score/)
 
 ## Enable Broadcasting/Spectating with Websockets
 
