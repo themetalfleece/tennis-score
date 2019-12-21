@@ -1,10 +1,13 @@
 $(document).ready(function () {
 
+	const socketAddress = 'http://localhost:8080';
+
 	// hide the Websocket menu if it's not loaded = the web app is static
 	try {
 		if (io === undefined);
-	}
-	catch (e) {
+		console.log(`the client is running with sockets`);
+	} catch (e) {
+		console.log(`the client is running without sockets`);
 		$('.ws_only').hide();
 	}
 
@@ -361,12 +364,15 @@ $(document).ready(function () {
 	/* methods for websockets */
 
 	$('#host').click(function () {
-		socket = io.connect('http://localhost:8080');
+		console.log(`initializing socket connection`);
+		socket = io.connect(socketAddress);
+		console.log(`socket connected`);
 
 		// on connection to server, emit an addhost message
 		socket.on('connect', function () {
 			socket.emit('addhost');
 			$('.connectionless_only').hide();
+			console.log(`host added`);
 		});
 
 		// it gets the id of the room it is hosting and emits config & state
@@ -383,7 +389,9 @@ $(document).ready(function () {
 
 
 	$('#join').click(function () {
-		socket = io.connect('http://localhost:8080');
+		console.log(`initializing socket connection`);
+		socket = io.connect(socketAddress);
+		console.log(`socket connected`);
 
 		match_id = parseInt(prompt('Which Match #?'));
 

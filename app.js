@@ -1,11 +1,14 @@
-var express = require('express')
-	, app = express()
-	, http = require('http')
-	, server = http.createServer(app)
-	, io = require('socket.io').listen(server);
+const express = require('express');
+const app = express();
 
-server.listen(8080);
-console.log('Listening on :8080');
+const http = require('http');
+const server = http.createServer(app);
+const io = require('socket.io').listen(server);
+
+const port = 8080;
+
+server.listen(port);
+console.log(`Listening on :${port}`);
 
 // routing
 app.get('/', function (req, res) {
@@ -16,11 +19,11 @@ app.use('/js', express.static('js'));
 app.use('/css', express.static('css'));
 
 // users which are currently listening
-var listeners = {};
+const listeners = {};
 
 // rooms which are currently available in chat
-var rooms = {};
-var room_count = 0;
+const rooms = {};
+let room_count = 0;
 
 io.sockets.on('connection', function (socket) {
 
@@ -29,6 +32,7 @@ io.sockets.on('connection', function (socket) {
 		rooms[room_count].host = socket.handshake.headers.cookie;
 		// emit the room id. also, request its current state & config
 		socket.emit('basic_info', room_count);
+		console.log(`room ${room_count} added`);
 		// TODO find a smarter way rather than ++
 		room_count++;
 	});

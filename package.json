@@ -4,12 +4,13 @@
   "description": "A server for handling tennis score websockets",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "themetalfleece",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.14.1",
-    "socket.io": "^1.7.3"
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
   }
 }
