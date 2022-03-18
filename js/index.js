@@ -1,10 +1,43 @@
 $(document).ready(function () {
   const socketAddress = "http://localhost:8080";
 
+  function connectToMatch(match_id) {
+    console.log(`initializing socket connection`);
+    socket = io.connect(socketAddress);
+    console.log(`socket connected`);
+
+    // when the match config needs to be updated
+    socket.on("server_updates_config", function (config) {
+      matchConfig = JSON.parse(config);
+      drawConfig();
+    });
+
+    // when the match state needs to be updated
+    socket.on("server_updates_state", function (state) {
+      matchState = JSON.parse(state);
+      drawScores();
+    });
+
+    // on connect, emite that we are listening the room specified
+    socket.on("connect", function () {
+      socket.emit("addlistener", match_id);
+      $("#ws_status").html(`Spectating Match # ${match_id}<br>`);
+      $(".connectionless_only").hide();
+      $(".host_only").hide();
+    });
+  }
+
   // hide the Websocket menu if it's not loaded = the web app is static
   try {
     if (io === undefined);
     console.log(`the client is running with sockets`);
+
+    // connect to existing room if a `?room=` search is given
+    const urlParams = new URLSearchParams(window.location.search);
+    const room = parseInt(urlParams.get("room"));
+    if (!isNaN(room)) {
+      connectToMatch(room);
+    }
   } catch (e) {
     console.log(`the client is running without sockets`);
     $(".ws_only").hide();
@@ -424,31 +457,9 @@ $(document).ready(function () {
   });
 
   $("#join").click(function () {
-    console.log(`initializing socket connection`);
-    socket = io.connect(socketAddress);
-    console.log(`socket connected`);
-
     match_id = parseInt(prompt("Which Match #?"));
 
-    // when the match config needs to be updated
-    socket.on("server_updates_config", function (config) {
-      matchConfig = JSON.parse(config);
-      drawConfig();
-    });
-
-    // when the match state needs to be updated
-    socket.on("server_updates_state", function (state) {
-      matchState = JSON.parse(state);
-      drawScores();
-    });
-
-    // on connect, emite that we are listening the room specified
-    socket.on("connect", function () {
-      socket.emit("addlistener", match_id);
-      $("#ws_status").html(`Spectating Match # ${match_id}<br>`);
-      $(".connectionless_only").hide();
-      $(".host_only").hide();
-    });
+    connectToMatch(match_id);
   });
 
   function emitMatchState() {
