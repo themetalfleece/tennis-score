@@ -20,3 +20,5 @@ Static webpage without broadcasting/spectating: [Webpage index](https://themetal
 1. Whenever you want to spectate a game, press the "Spectate" button.
 2. You will be prompted to give a Match #. Enter the number which corresponds to the match you want to spectate.
 3. A message will appear to inform you that you are spectating a match. Whenever its status changes, it will also change on your browser.
+
+You can join an existing game by loading the page with `?room=X`, where `X` is the room number.
