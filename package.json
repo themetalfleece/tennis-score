@@ -1,7 +1,7 @@
 {
-  "name": "server",
+  "name": "tennis-score",
   "version": "1.0.0",
-  "description": "A server for handling tennis score websockets",
+  "description": "App for handling tennis score using websockets",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -10,7 +10,7 @@
   "author": "themetalfleece",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
-    "socket.io": "^2.4.0"
+    "express": "^4.18.2",
+    "socket.io": "^4.7.1"
   }
 }
