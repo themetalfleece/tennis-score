@@ -6,10 +6,10 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
-const port = 8080;
+const port = 3000;
 
 server.listen(port);
-console.log(`Listening on :${port}`);
+console.log(`Listening on http://localhost:${port}`);
 
 // routing
 app.get("/", function (req, res) {

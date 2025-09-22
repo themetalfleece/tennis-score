@@ -5,10 +5,11 @@ Static webpage without broadcasting/spectating: [Webpage index](https://themetal
 
 ## Enable Broadcasting/Spectating with Websockets
 
-1. Install **node**
-2. On the root project folder, run `npm install` (or `yarn`) in order to install the necessary modules
-3. Run `npm run start` (or `yarn start`) to start the websocket server
-4. Navigate to your IP address with the given port.
+1. Install [node.js](https://nodejs.org/en)
+2. Enable yarn: `corepack enable yarn`
+3. On the root project folder, run `yarn` in order to install the necessary modules
+4. Run `yarn start to start the websocket server
+5. Navigate to your IP address with the given port.
 
 ### Broadcasting/Spectating instructions
 
