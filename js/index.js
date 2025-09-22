@@ -24,6 +24,12 @@ $(document).ready(function () {
       $("#ws_status").html(`Spectating Match #${match_id}<br>`);
       $(".connectionless_only").hide();
       $(".host_only").hide();
+
+      // Update URL with room parameter
+      updateUrlWithRoom(match_id);
+
+      // Show match URL section
+      $("#match-url-section").removeClass("hidden");
     });
   }
 
@@ -36,6 +42,9 @@ $(document).ready(function () {
     const urlParams = new URLSearchParams(window.location.search);
     const room = parseInt(urlParams.get("room"));
     if (!isNaN(room)) {
+      // Update the match URL input field for URL-based connections
+      $("#matchUrl").val(window.location.href);
+      $("#match-url-section").removeClass("hidden");
       connectToMatch(room);
     }
   } catch (e) {
@@ -431,6 +440,67 @@ $(document).ready(function () {
     }
   }
 
+  /* URL management functions */
+
+  function updateUrlWithRoom(roomId) {
+    const url = new URL(window.location);
+    url.searchParams.set('room', roomId);
+    window.history.pushState({}, '', url);
+
+    // Update the match URL input field
+    $("#matchUrl").val(url.toString());
+  }
+
+  function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      // Use modern clipboard API
+      navigator.clipboard.writeText(text).then(function () {
+        showCopyFeedback();
+      }).catch(function (err) {
+        fallbackCopyToClipboard(text);
+      });
+    } else {
+      // Fallback for older browsers
+      fallbackCopyToClipboard(text);
+    }
+  }
+
+  function fallbackCopyToClipboard(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    textArea.style.top = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+      // Use the modern clipboard API with a fallback
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(showCopyFeedback);
+      } else {
+        // Last resort: show the text for manual copying
+        alert(`Copy this URL: ${text}`);
+      }
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+      alert(`Copy this URL: ${text}`);
+    }
+
+    document.body.removeChild(textArea);
+  }
+
+  function showCopyFeedback() {
+    const btn = $("#copyUrlBtn");
+    const originalText = btn.text();
+    btn.text("Copied!").addClass("btn-success").removeClass("btn-default");
+
+    setTimeout(function () {
+      btn.text(originalText).addClass("btn-default").removeClass("btn-success");
+    }, 2000);
+  }
+
   /* methods for websockets */
 
   $("#host").click(function () {
@@ -450,6 +520,12 @@ $(document).ready(function () {
       match_id = id;
       $("#ws_status").html(`Broadcasting Match #${match_id}<br>`);
 
+      // Update URL with room parameter
+      updateUrlWithRoom(match_id);
+
+      // Show match URL section
+      $("#match-url-section").removeClass("hidden");
+
       // after getting room id, we broadcast our config & state
       emitMatchConfig();
       emitMatchState();
@@ -460,6 +536,13 @@ $(document).ready(function () {
     match_id = parseInt(prompt("Which Match #?"));
 
     connectToMatch(match_id);
+  });
+
+  $("#copyUrlBtn").click(function () {
+    const url = $("#matchUrl").val();
+    if (url) {
+      copyToClipboard(url);
+    }
   });
 
   function emitMatchState() {
