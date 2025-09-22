@@ -21,7 +21,7 @@ $(document).ready(function () {
     // on connect, emite that we are listening the room specified
     socket.on("connect", function () {
       socket.emit("addlistener", match_id);
-      $("#ws_status").html(`Spectating Match # ${match_id}<br>`);
+      $("#ws_status").html(`Spectating Match #${match_id}<br>`);
       $(".connectionless_only").hide();
       $(".host_only").hide();
     });
@@ -448,7 +448,7 @@ $(document).ready(function () {
     // it gets the id of the room it is hosting and emits config & state
     socket.on("basic_info", function (id) {
       match_id = id;
-      $("#ws_status").html(`Broadcasting Match # ${match_id}<br>`);
+      $("#ws_status").html(`Broadcasting Match #${match_id}<br>`);
 
       // after getting room id, we broadcast our config & state
       emitMatchConfig();
